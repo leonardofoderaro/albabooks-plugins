@@ -28,5 +28,14 @@ public class Book {
 	@Field
 	public boolean eligibleForDiscount;
 	
+	@Field
+	public float price;
+	
+	@Field
+	public float discountedPrice;
+	
+	@Field
+	public int year;
+	
 	
 }
