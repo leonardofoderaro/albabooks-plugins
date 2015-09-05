@@ -1,9 +1,23 @@
 package examples.alba.books;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Calendar;
+import java.util.List;
+
+import javax.swing.event.DocumentListener;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.apache.commons.lang.WordUtils;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.request.SolrQueryRequest;
+import org.apache.solr.response.SolrQueryResponse;
+import org.apache.solr.search.DocList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +25,7 @@ import alba.solr.annotations.DocTransformer;
 import alba.solr.annotations.FunctionQuery;
 import alba.solr.annotations.Param;
 import alba.solr.annotations.AlbaPlugin;
+import alba.solr.annotations.ResponseWriter;
 
 /*
  * IMPORTANT:
@@ -128,6 +143,62 @@ public class AlbaBooksPlugin {
 		return ((currentYear - year) >= age);
 	}
 	
+	
+
+	@ResponseWriter(value="plain", responseType="text/plain") 
+	public void plainWriter (Writer writer, SolrQueryRequest request,
+			SolrQueryResponse response, SolrDocumentList docList) throws IOException {
+		
+		if (docList != null) {
+			writer.write("Hello there! We have " + docList.size() + " docs in this resultset:\n\r");
+			for (SolrDocument doc : docList) {
+				writer.write(doc.getFieldValue("title").toString() + "\n\r");
+			}
+		} else {
+			writer.write("Hello there! doclist is null\n\r");	
+		}
+		
+		
+	}
+	
+	
+	@ResponseWriter(value="custom", responseType="text/plain") 
+	public void customWriter (Writer writer, SolrQueryRequest request,
+			SolrQueryResponse response, List<Book> docList) throws IOException {
+		
+		writer.write("Hello there! We have " + docList.size() + " docs in this resultset\n\r");
+		
+		for (Book book : docList) {
+			writer.write(book.title + "\n\r");
+		}
+		
+	}
+	
+	
+	@ResponseWriter(value="customXML", responseType="text/xml") 
+	public Books customXML (Writer writer, SolrQueryRequest request,
+			SolrQueryResponse response, List<Book> docList) throws IOException {
+		
+		Books books = new Books();
+		
+		books.setBooks(docList);
+		
+		return books;
+
+	}
+
+	
+	@ResponseWriter(value="xmlBeans", responseType="text/plain") 
+	public void generateXMLMappedBeans (Writer writer, SolrQueryRequest request,
+			SolrQueryResponse response, List<Book> docList) throws IOException {
+		
+		writer.write("Hello there! We have " + docList.size() + " docs in this resultset\n\r");
+		
+		for (Book book : docList) {
+			writer.write(book.title + "\n\r");
+		}
+		
+	}
 	
 }
 
