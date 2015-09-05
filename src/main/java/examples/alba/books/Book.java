@@ -26,13 +26,13 @@ public class Book {
 	public String image;
 	
 	@Field
-	public boolean eligibleForDiscount;
+	public Boolean eligibleForDiscount;
 	
 	@Field
 	public float price;
 	
 	@Field
-	public float discountedPrice;
+	public Float discountedPrice;
 	
 	@Field
 	public int year;
